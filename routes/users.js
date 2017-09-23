@@ -17,6 +17,11 @@ router.get('/register', function(req, res, next) {
   res.render('auth/register');
 });
 
+//GET login page
+router.get('/login', function(req, res, next) {
+  res.render('auth/login');
+});
+
 //POST register page
 router.post('/register', function(req, res, next) {
   if(req.body.password != req.body.confirm_password) {
@@ -39,9 +44,30 @@ router.post('/register', function(req, res, next) {
       if (err) {
         return next(err)
       } else {
+        req.session.userId = user._id;
         return res.redirect('/dashboard');
       }
     });
+  }
+});
+
+//POST login page
+router.post('/login', function(req, res, next) {
+  if(req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, function(error, user) {
+      if(error || !user) {
+        var err = new Erorr('Wrong email and password combination');
+        err.status = 401;
+        return next(err);
+      } else {
+        req.session.userId = user._id;
+        return res.redirect('/dashboard');
+      }
+    });
+  } else {
+    var err = new Error('All fields are required');
+    err.status = 400;
+    return next(err);
   }
 });
 
