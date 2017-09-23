@@ -45,7 +45,7 @@ router.post('/register', function(req, res, next) {
         return next(err)
       } else {
         req.session.userId = user._id;
-        return res.redirect('/dashboard');
+        return res.redirect('/users/dashboard');
       }
     });
   }
@@ -61,7 +61,7 @@ router.post('/login', function(req, res, next) {
         return next(err);
       } else {
         req.session.userId = user._id;
-        return res.redirect('/dashboard');
+        return res.redirect('/users/dashboard');
       }
     });
   } else {
