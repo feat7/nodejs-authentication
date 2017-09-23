@@ -17,7 +17,13 @@ router.get('/register', function(req, res, next) {
 });
 
 //POST register page
-router.get('/register', function(req, res, next) {
+router.post('/register', function(req, res, next) {
+  if(req.body.password != req.body.confirm_password) {
+    var err = new Error('Passwords do not match');
+    err.status = 400;
+    res.send("passwords do not match");
+    return next(err);
+  }
   if (req.body.email &&
     req.body.username &&
     req.body.password &&
