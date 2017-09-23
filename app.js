@@ -4,12 +4,36 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 //Routes
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+
+//Connect MongoDB
+mongoose.connect('mongodb://localhost/test');
+var db = mongoose.connection;
+
+//Handle Mongo Error
+db.on('error', console.error.bind(console, 'connection error...'));
+db.once('open', function() {
+  console.log('Database connected');
+})
+
+//use sessions for tracking logins
+app.use(session({
+  secret: '#mySeceretKey#$',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
